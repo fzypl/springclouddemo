@@ -1,0 +1,36 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true #利用为服务名开启注册
+      routes:
+        - id: payment_routh
+          #uri: http://localhost:8001
+          uri: lb://cloud-payment-service #此处如果有问题，请注意依赖spring-cloud-starter-netflix-eureka-client依赖不能错
+          predicates:
+            - Path=/payment/get/**
+        - id: payment_routh2
+          #uri: http://localhost:8001
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/payment/lb/**
+            - After=2020-03-18T20:09:34.443914200+08:00[Asia/Shanghai] #时间断言
+            - Method=GET
+eureka:
+  instance:
+    hostname: cloud-gateway-service
+  client: #EurekaClientConfigBean
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+#      register-with-eureka: true
+#      fetch-registry: true
+      defaultZone: http://eureka7001.com:7001/eureka
+
+
